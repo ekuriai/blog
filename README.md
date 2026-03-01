@@ -34,7 +34,7 @@ category: "guide"
 | `title` | string | yes | Post headline |
 | `description` | string | yes | Used in blog cards, RSS, and Open Graph |
 | `date` | YYYY-MM-DD | yes | Must match filename date prefix |
-| `category` | string | yes | `"guide"` or `"dev-diary"` |
+| `category` | string | yes | `"guide"`, `"dev-diary"`, or `"firfir"` |
 | `author` | string | no | Defaults to `"Aziz"` |
 | `image` | URL | no | Open Graph image, defaults to site OG image |
 | `tags` | list | no | e.g. `["ai", "tutorial"]` |
@@ -58,5 +58,5 @@ Supports: headings, lists, links, images, code blocks, HTML embeds.
 
 - Only `posts/*.md` files are allowed in PRs — any other file change will be rejected
 - Frontmatter must include all required fields
-- Category must be `guide` or `dev-diary`
+- Category must be `guide`, `dev-diary`, or `firfir`
 - Post body must be at least 50 characters
