@@ -1,0 +1,50 @@
+name: publish
+
+on:
+  push:
+    branches: [main]
+    paths: ['posts/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout blog repo (posts)
+        uses: actions/checkout@v4
+        with:
+          path: blog
+
+      - name: Checkout ekuri repo (site + build tools)
+        uses: actions/checkout@v4
+        with:
+          repository: ekuriai/ekuri
+          ssh-key: ${{ secrets.EKURI_DEPLOY_KEY }}
+          path: ekuri
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ekuri/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ekuri
+        run: npm ci
+
+      - name: Copy bot posts into ekuri blog
+        run: |
+          # Copy all .md files from blog repo posts/ into ekuri blog/posts/
+          # This merges bot posts with any existing posts in the ekuri repo
+          cp blog/posts/*.md ekuri/blog/posts/ 2>/dev/null || echo "No posts to copy"
+
+      - name: Build site
+        working-directory: ekuri
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        working-directory: ekuri
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist --project-name ekuri --branch main
