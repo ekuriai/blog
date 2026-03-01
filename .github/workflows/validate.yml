@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 jobs:
   validate:
@@ -130,9 +130,3 @@ jobs:
             }
 
             core.info(`All ${files.length} file(s) passed validation.`);
-
-      - name: Enable auto-merge
-        if: success()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge ${{ github.event.pull_request.number }} --auto --merge
